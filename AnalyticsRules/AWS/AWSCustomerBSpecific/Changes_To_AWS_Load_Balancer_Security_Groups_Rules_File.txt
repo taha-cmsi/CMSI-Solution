@@ -1,0 +1,6 @@
+
+"if": { "SubscriptionID": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB" },
+    "then": { 
+		# Analytic Rule File Content
+	},
+    "else": {}

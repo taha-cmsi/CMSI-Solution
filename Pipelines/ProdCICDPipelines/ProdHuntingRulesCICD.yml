@@ -1,0 +1,62 @@
+# This header section tells the pipeline where to find important information like where the scripts and JSON files are.
+name: Production Build and Deploy Hunting Rules
+resources:
+ pipelines:
+   - pipeline: Scripts
+     source: 'Scripts'
+trigger:
+ paths:
+   include:
+     - HuntingRules/ProdHuntingRules/*
+
+stages:
+# The first stage does all 3 of the setup tasks which are copying JSON files, verifying those files, and publishing those files to the pipeline.
+- stage: build_hunting_rules
+
+  jobs:
+    - job: AgentJob
+      pool:
+       name: Azure Pipelines
+       vmImage: 'vs2017-win2016'
+      steps:
+       - task: CopyFiles@2
+         displayName: 'Copy Hunting Rules'
+         inputs:
+          SourceFolder: HuntingRules
+          TargetFolder: '$(Pipeline.Workspace)'
+       - task: Files-Validator@1
+         inputs:
+           rootDir: '$(Pipeline.Workspace)/*.json'
+           validateXML: false
+           validateJSON: true
+           validateYAML: false
+           validatePS: false
+       - task: PublishBuildArtifacts@1
+         displayName: 'Publish Artifact: HuntingFile'
+         inputs:
+          PathtoPublish: '$(Pipeline.Workspace)'
+          ArtifactName: HuntingFile
+
+# The second stage takes the published files and deploys them to the Sentinel environment defined in the group section under variables. 
+# The ScriptArguments section must match the param section in the associated ps1 file otherwise the automation will have a failing error.
+- stage: deploy_hunting_rules
+  jobs:
+    - job: AgentJob
+      pool:
+       name: Azure Pipelines
+       vmImage: 'windows-2019'
+      variables: 
+      - group: CyberMSI Production Connection Settings
+      steps:
+      - download: current
+        artifact: HuntingFile
+      - download: Scripts
+        patterns: '*.ps1'
+      - task: AzurePowerShell@4
+        displayName: 'Create and Update Hunting Rules'
+        inputs:
+         azureSubscription: 'CyberMSI DevOps Service Connection'
+         ScriptPath: '$(Pipeline.Workspace)/Scripts/Scripts/CreateHuntingRulesAPI.ps1'
+         ScriptArguments: '-Workspace $(Workspace) -RulesFile ProdHuntingRules.json'
+         azurePowerShellVersion: LatestVersion
+         pwsh: true

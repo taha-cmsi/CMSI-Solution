@@ -1,0 +1,657 @@
+{
+  "Scheduled": [
+    {
+        "displayName": "Suspicious O365 Threat Protection Changes (SOC Prime)",
+        "description": "Adversaries may disable security solutions to avoid possible detection of their activities. Technique: T1078.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"Disable-AntiPhishRule\" or Operation == \"Disable-SafeAttachmentRule\" or Operation == \"Disable-SafeLinksRule\" or Operation == \"Remove-AntiPhishPolicy\" or Operation == \"Remove-AntiPhishRule\" or Operation == \"Remove-SafeAttachmentPolicy\" or Operation == \"Remove-SafeAttachmentRule\" or Operation == \"Remove-SafeLinksPolicy\" or Operation == \"Remove-SafeLinksRule\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "O365 Sharing Policy was Changed (SOC Prime)",
+        "description": "A SharePoint or global administrator changed a SharePoint sharing policy by using the Office 365 admin portal, SharePoint admin portal, or SharePoint Online Management Shell. Technique: T1078.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"SharingPolicyChanged\") | where ingestion_time() >= ago(12h) | extend AccountCustomEntity = TargetUserId | extend HostCustomEntity = Client | extend UrlCustomEntity = SourceRelativeUrl | extend MailboxCustomEntity = MailboxGuid",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Suspicious O365 Audit Configuration Policy Operations (SOC Prime)",
+        "description": "Remove audit configuration policies from the Security & Compliance Center. Technique: T1078.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"Remove-AuditConfigurationPolicy\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Bulk O365 Membership List Manipulation (SOC Prime)",
+        "description": "The Update-RoleGroupMember cmdlet enables you to replace the entire membership list for a role group or perform programmatic addition or removal of multiple members at a single time. Technique: T1098.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"Update-RoleGroupMember\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Persistence"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "O365 Data Loss Prevention Rule Match (SOC Prime)",
+        "description": "This indicates a rule was matched. These events exist in both Exchange and SharePoint Online and OneDrive for Business. Technique: T1114.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"DLPRuleMatch\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Collection"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "O365 Data Loss Prevention Undo Action (SOC Prime)",
+        "description": "Idicate a previously applied policy action has been \"undone\" – either because of false positive/override designation by user. Technique: T1078.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"DLPRuleUndo\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Reset User Password Operation in O365 (SOC Prime)",
+        "description": "Password reset action was performed. Technique: T1098.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"Reset user password\") and (ResultStatus == \"Failure\" or ResultStatus == \"Success\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "CredentialAccess"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "User Account Was Locked in O365 (SOC Prime)",
+        "description": "Possible user account brute force attack attempt. Technique: T1110.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where Operation == \"UserLoginFailed\" | where * contains \"IdsLocked\" | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "CredentialAccess"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Sysinternals Tools Detected in O365 (SOC Prime)",
+        "description": "Can be used for offensive perspective. Technique: T1204.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileAccessed\" or Operation == \"FileDownloaded\") and (SourceFileName == \"AccessEnum.exe\" or SourceFileName == \"AdExplorer.exe\" or SourceFileName == \"AdInsight.exe\" or SourceFileName == \"AdRestore.exe\" or SourceFileName == \"Autologon.exe\" or SourceFileName == \"Autoruns.exe\" or SourceFileName == \"BgInfo.exe\" or SourceFileName == \"CacheSet.exe\" or SourceFileName == \"ClockRes.exe\" or SourceFileName == \"Contig.exe\" or SourceFileName == \"Coreinfo.exe\" or SourceFileName == \"Ctrl2Cap.exe\" or SourceFileName == \"DebugView.exe\" or SourceFileName == \"Desktops.exe\" or SourceFileName == \"Disk2vhd.exe\" or SourceFileName == \"DiskExt.exe\" or SourceFileName == \"DiskMon.exe\" or SourceFileName == \"DiskView.exe\" or SourceFileName == \"EFSDump.exe\" or SourceFileName == \"FindLinks.exe\" or SourceFileName == \"Handle.exe\" or SourceFileName == \"Hex2dec.exe\" or SourceFileName == \"Junction.exe\" or SourceFileName == \"LDMDump.exe\" or SourceFileName == \"ListDLLs.exe\" or SourceFileName == \"LiveKd.exe\" or SourceFileName == \"LoadOrder.exe\" or SourceFileName == \"LogonSessions.exe\" or SourceFileName == \"PipeList.exe\" or SourceFileName == \"PortMon.exe\" or SourceFileName == \"ProcDump.exe\" or SourceFileName == \"ProcMon.exe\" or SourceFileName == \"PsFile.exe\" or SourceFileName == \"PsGetSid.exe\" or SourceFileName == \"PsInfo.exe\" or SourceFileName == \"PsKill.exe\" or SourceFileName == \"PsList.exe\" or SourceFileName == \"PsLogList.exe\" or SourceFileName == \"PsLoggedOn.exe\" or SourceFileName == \"PsPasswd.exe\" or SourceFileName == \"PsPing.exe\" or SourceFileName == \"PsService.exe\" or SourceFileName == \"PsShutdown.exe\" or SourceFileName == \"PsSuspend.exe\" or SourceFileName == \"RAMMap.exe\" or SourceFileName == \"RegDelNull.exe\" or SourceFileName == \"RegJump.exe\" or SourceFileName == \"SDelete.exe\" or SourceFileName == \"ShareEnum.exe\" or SourceFileName == \"ShellRunas.exe\" or SourceFileName == \"Sigcheck.exe\" or SourceFileName == \"Streams.exe\" or SourceFileName == \"Strings.exe\" or SourceFileName == \"Sysmon.exe\" or SourceFileName == \"TCPView.exe\" or SourceFileName == \"WhoIs.exe\" or SourceFileName == \"WinObj.exe\" or SourceFileName == \"ZoomIt.exe\" or SourceFileName == \"pipelist.exe\" or SourceFileName == \"procexp.exe\" or SourceFileName == \"psexec.exe\" or SourceFileName == \"ru.exe\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Sensitive File Sharing in O365 Apps (SOC Prime)",
+        "description": "Share link for possible sensitive file was created. Technique: T1074.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"SharingInheritanceBroken\" or Operation == \"SharingSet\" or Operation == \"SecureLinkCreated\" or Operation == \"SecureLinkUsed\") and (OfficeObjectId contains \"passwo\" or OfficeObjectId contains \"confide\" or OfficeObjectId contains \"secret\" or OfficeObjectId contains \"finance\" or OfficeObjectId contains \"Cash\" or OfficeObjectId contains \"banking\" or OfficeObjectId contains \"swift\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Collection"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "TransportRule Operations in O365 (SOC Prime)",
+        "description": "Create transport rules (mail flow rules) in your organization. Technique: T1020.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((ResultStatus == \"True\") and (Operation == \"Set-TransportRule\" or Operation == \"Enable-TransportRule\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Exfiltration"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "User Added to an Admin Group in O365 (SOC Prime)",
+        "description": "Added a user to an admin group in Office 365. Technique: T1098.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"Add member to group\") and (ResultStatus == \"Success\") and (ModifiedProperties contains \"admin\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Persistence"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Suspicious File Extention Found in O365 App (SOC Prime Team)",
+        "description": "File extensions that are potentially dangerous on windows. Technique: T1204.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileAccessed\" or Operation == \"FileDownloaded\") and (SourceFileExtension == \"ade\" or SourceFileExtension == \"adp\" or SourceFileExtension == \"app\" or SourceFileExtension == \"asp\" or SourceFileExtension == \"bas\" or SourceFileExtension == \"bat\" or SourceFileExtension == \"cer\" or SourceFileExtension == \"chm\" or SourceFileExtension == \"cla\" or SourceFileExtension == \"class\" or SourceFileExtension == \"cmd\" or SourceFileExtension == \"cnt\" or SourceFileExtension == \"com\" or SourceFileExtension == \"cpl\" or SourceFileExtension == \"crt\" or SourceFileExtension == \"csh\" or SourceFileExtension == \"der\" or SourceFileExtension == \"diagcab\" or SourceFileExtension == \"exe\" or SourceFileExtension == \"fxp\" or SourceFileExtension == \"gadget\" or SourceFileExtension == \"grp\" or SourceFileExtension == \"hlp\" or SourceFileExtension == \"hpj\" or SourceFileExtension == \"hta\" or SourceFileExtension == \"ins\" or SourceFileExtension == \"isp\" or SourceFileExtension == \"its\" or SourceFileExtension == \"jar\" or SourceFileExtension == \"jnlp\" or SourceFileExtension == \"jse\" or SourceFileExtension == \"ksh\" or SourceFileExtension == \"mad\" or SourceFileExtension == \"maf\" or SourceFileExtension == \"mag\" or SourceFileExtension == \"mam\" or SourceFileExtension == \"maq\" or SourceFileExtension == \"mar\" or SourceFileExtension == \"mas\" or SourceFileExtension == \"mat\" or SourceFileExtension == \"mau\" or SourceFileExtension == \"mav\" or SourceFileExtension == \"maw\" or SourceFileExtension == \"mcf\" or SourceFileExtension == \"mda\" or SourceFileExtension == \"mdb\" or SourceFileExtension == \"mde\" or SourceFileExtension == \"mdt\" or SourceFileExtension == \"mdw\" or SourceFileExtension == \"mdz\" or SourceFileExtension == \"msc\" or SourceFileExtension == \"msh\" or SourceFileExtension == \"msh1\" or SourceFileExtension == \"msh1xml\" or SourceFileExtension == \"msh2\" or SourceFileExtension == \"msh2xml\" or SourceFileExtension == \"mshxml\" or SourceFileExtension == \"msi\" or SourceFileExtension == \"msp\" or SourceFileExtension == \"mst\" or SourceFileExtension == \"msu\" or SourceFileExtension == \"ocx\" or SourceFileExtension == \"ops\" or SourceFileExtension == \"osd\" or SourceFileExtension == \"pcd\" or SourceFileExtension == \"pif\" or SourceFileExtension == \"pl\" or SourceFileExtension == \"plg\" or SourceFileExtension == \"prf\" or SourceFileExtension == \"prg\" or SourceFileExtension == \"ps1\" or SourceFileExtension == \"ps1xml\" or SourceFileExtension == \"ps2\" or SourceFileExtension == \"ps2xml\" or SourceFileExtension == \"psc1\" or SourceFileExtension == \"psc2\" or SourceFileExtension == \"psd1\" or SourceFileExtension == \"psdm1\" or SourceFileExtension == \"pst\" or SourceFileExtension == \"reg\" or SourceFileExtension == \"scf\" or SourceFileExtension == \"scr\" or SourceFileExtension == \"sct\" or SourceFileExtension == \"shb\" or SourceFileExtension == \"shs\" or SourceFileExtension == \"theme\" or SourceFileExtension == \"vb\" or SourceFileExtension == \"vbe\" or SourceFileExtension == \"vbp\" or SourceFileExtension == \"vbs\" or SourceFileExtension == \"vsmacros\" or SourceFileExtension == \"vsw\" or SourceFileExtension == \"webpnp\" or SourceFileExtension == \"website\" or SourceFileExtension == \"ws\" or SourceFileExtension == \"wsc\" or SourceFileExtension == \"wsf\" or SourceFileExtension == \"wsh\" or SourceFileExtension == \"xbap\" or SourceFileExtension == \"xll\" or SourceFileExtension == \"xnk\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Password Change Failed in O365 App (SOC Prime)",
+        "description": "Change user password action was failed. Technique: T1098.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"Change user password\") and (ResultStatus == \"Failure\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "CredentialAccess"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Set DirSyncEnabled Flag in an O365 App(SOC Prime)",
+        "description": "Value of DirSyncEnabled attribute defines if its a cloud only account or synced account. A synched account can be used for data exfiltration. Technique: T1020.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((ResultStatus == \"Success\") and (ModifiedProperties contains \"DirSyncEnabled\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Exfiltration"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Sensitive File Operations in an O365 App (SOC Prime)",
+        "description": "Possible files, which contains password, secrets, etc. Technique: T1074.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileDownloaded\" or Operation == \"FileCopied\") and (OfficeObjectId contains \"passwo\" or OfficeObjectId contains \"confide\" or OfficeObjectId contains \"secret\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Collection"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Network Scan Tools Detected in an O365 App (SOC Prime)",
+        "description": "Detects hacktool names, like empire scripts etc. Technique: T1204.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileAccessed\" or Operation == \"FileDownloaded\") and (SourceFileName contains \"ipscan\" or SourceFileName contains \"ip_scan\" or SourceFileName contains \"ip-scan\" or SourceFileName contains \"netscan\" or SourceFileName contains \"nmap\" or SourceFileName contains \"scanner.exe\" or SourceFileName contains \"superscan\" or SourceFileName contains \"zenmap\" or SourceFileName contains \"nbtscan\" or SourceFileName contains \"enumera\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Distribution Group Operations in an O365 App (SOC Prime)",
+        "description": "Distribution groups are used to consolidate groups of recipients into a single point of contact for email messages. Technique: T1098.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation contains \"DistributionGroup\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Persistence"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Possible Remote Administration Tools Detected in an O365 App (SOC Prime)",
+        "description": "A remote administration tool is software that helps an administrator or malicious actor receive full control of a targeted device. Technique: T1204.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileAccessed\" or Operation == \"FileDownloaded\") and (SourceFileName contains \"famitrfc\" or SourceFileName contains \"g2fileh\" or SourceFileName contains \"g2host\" or SourceFileName contains \"g2mainh\" or SourceFileName contains \"g2printh\" or SourceFileName contains \"g2svc\" or SourceFileName contains \"g2tray\" or SourceFileName contains \"gopcsrv\" or SourceFileName contains \"lmiguardiansvc\" or SourceFileName contains \"logmein\" or SourceFileName contains \"showmypc\" or SourceFileName contains \"vncviewer\" or SourceFileName contains \"winvncsc\" or SourceFileName contains \"aa_v\" or SourceFileName contains \"awhost32\" or SourceFileName contains \"awrem32\" or SourceFileName contains \"dwrcs\" or SourceFileName contains \"g2comm\" or SourceFileName contains \"lmiignition\" or SourceFileName contains \"mstsc\" or SourceFileName contains \"radmin\" or SourceFileName contains \"smpcsetup\" or SourceFileName contains \"teamviewer\" or SourceFileName contains \"termsrv\" or SourceFileName contains \"winvnc\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Malware Detected by SharePoint AV Engine (SOC Prime)",
+        "description": "SharePoint anti-virus engine detects malware in a file. Technique: T1204.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"FileMalwareDetected\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "HackTools Detected in an O365 App (SOC Prime)",
+        "description": "Detects hacktool names, like empire scripts etc. Technique: T1204.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileAccessed\" or Operation == \"FileDownloaded\") and (SourceFileName contains \"Obfuscation\" or SourceFileName contains \"PowerShellLauncher\" or SourceFileName contains \"EncodedAsciiCommand\" or SourceFileName contains \"EncodedHexCommand\" or SourceFileName contains \"EncodedBXORCommand\" or SourceFileName contains \"EncodedWhitespaceCommand\" or SourceFileName contains \"EncodedBinaryCommand\" or SourceFileName contains \"EncodedOctalCommand\" or SourceFileName contains \"EncodedSpecialCharOnlyCommand\" or SourceFileName contains \"SecureStringCommand\" or SourceFileName contains \"ObfuscatedStringCommand\" or SourceFileName contains \"ObfuscatedTokenCommand\" or SourceFileName contains \"Obfuscated\" or SourceFileName contains \"ToObfuscate\" or SourceFileName contains \"EternalBlue\" or SourceFileName contains \"PostExfil\" or SourceFileName contains \"ExfilDataToGitHub\" or SourceFileName contains \"EgressCheck\" or SourceFileName contains \"NetRipper\" or SourceFileName contains \"Minidump\" or SourceFileName contains \"SQLColumnSampleData\" or SourceFileName contains \"Inveigh\" or SourceFileName contains \"FoxDump\" or SourceFileName contains \"USBKeystrokes\" or SourceFileName contains \"NinjaCopy\" or SourceFileName contains \"SQLQuery\" or SourceFileName contains \"Keystrokes\" or SourceFileName contains \"KeePassConfig\" or SourceFileName contains \"KeeThief\" or SourceFileName contains \"BrowserData\" or SourceFileName contains \"ClipboardContents\" or SourceFileName contains \"IndexedItem\" or SourceFileName contains \"ChromeDump\" or SourceFileName contains \"TrustedDocuments\" or SourceFileName contains \"Paranoia\" or SourceFileName contains \"MonitorTCPConnections\" or SourceFileName contains \"WinEnum\" or SourceFileName contains \"ComputerDetails\" or SourceFileName contains \"SystemDNSServer\" or SourceFileName contains \"powerview\" or SourceFileName contains \"BloodHound\" or SourceFileName contains \"ARPScan\" or SourceFileName contains \"SQLServerInfo\" or SourceFileName contains \"SMBAutoBrute\" or SourceFileName contains \"SQLInstanceDomain\" or SourceFileName contains \"ReverseDNSLookup\" or SourceFileName contains \"SmbScanner\" or SourceFileName contains \"Portscan\" or SourceFileName contains \"MacAttribute\" or SourceFileName contains \"MailRaider\" or SourceFileName contains \"HoneyHash\" or SourceFileName contains \"PSInject\" or SourceFileName contains \"ReflectivePEInjection\" or SourceFileName contains \"Thunderstruck\" or SourceFileName contains \"VoiceTroll\" or SourceFileName contains \"InveighRelay\" or SourceFileName contains \"SSHCommand\" or SourceFileName contains \"SQLOSCmd\" or SourceFileName contains \"PsExec\" or SourceFileName contains \"ExecuteMSBuild\" or SourceFileName contains \"SMBExec\" or SourceFileName contains \"PowerBreach\" or SourceFileName contains \"BackdoorLNK\" or SourceFileName contains \"SecurityPackages\" or SourceFileName contains \"RickAstley\" or SourceFileName contains \"MetasploitPayload\" or SourceFileName contains \"ShellcodeMSIL\" or SourceFileName contains \"Shellcode\" or SourceFileName contains \"ReflectivePEInjection\" or SourceFileName contains \"DllInjection\" or SourceFileName contains \"SQLServerLoginDefaultPw\" or SourceFileName contains \"SiteListPassword\" or SourceFileName contains \"BypassUAC\" or SourceFileName contains \"GPPPassword\" or SourceFileName contains \"BypassUACTokenManipulation\" or SourceFileName contains \"EventVwrBypass\" or SourceFileName contains \"SDCLTBypass\" or SourceFileName contains \"MS16135\" or SourceFileName contains \"EnvBypass\" or SourceFileName contains \"FodHelperBypass\" or SourceFileName contains \"WScriptBypassUAC\" or SourceFileName contains \"MS16032\" or SourceFileName contains \"PowerUp\" or SourceFileName contains \"Mimikatz\" or SourceFileName contains \"Kerberoast\" or SourceFileName contains \"SessionGopher\" or SourceFileName contains \"CredentialInjection\" or SourceFileName contains \"dumpCredStore\" or SourceFileName contains \"TokenManipulation\" or SourceFileName contains \"DCSync\" or SourceFileName contains \"VaultCredential\" or SourceFileName contains \"PowerDump\" or SourceFileName contains \"http_com\" or SourceFileName contains \"http_mapi\" or SourceFileName contains \"DomainSPNTicket\" or SourceFileName contains \"SPNTicket\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Cryptominer Tools Detected in an O365 App (SOC Prime)",
+        "description": "Detects known cryptomining tools. Technique: T1204.",
+        "severity": "low",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileAccessed\" or Operation == \"FileDownloaded\") and (SourceFileName contains \"miner\" or SourceFileName contains \"auroracoin\" or SourceFileName contains \"bitcoin\" or SourceFileName contains \"bitmoose\" or SourceFileName contains \"btc.exe\" or SourceFileName contains \"minerd\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "O365 App Established a Connection With a Suspicious User Agent (SOC Prime)",
+        "description": "May be used for direct download via Powershell or other tools. Technique: T1105,T1105.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where (UserAgent contains \"Wget\" or UserAgent contains \"curl\" or UserAgent contains \"PowerShell\" or UserAgent contains \"WinRM\" or UserAgent contains \"Bits\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "CommandAndControl",
+            "LateralMovement"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Anonymous Link Operations in O365 Apps (SOC Prime)",
+        "description": "Create, Update and other anonymous link operations detected. Technique: T1074.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where (Operation == \"AnonymousLinkUsed\" or Operation == \"AnonymousLinkUpdated\" or Operation == \"AnonymousLinkCreated\" or Operation == \"AnonymousLinkRemoved\") | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Collection"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Added a User to an Admin Role in Office 365 (SOC Prime)",
+        "description": "Added a user to an admin role in Office 365. Technique: T1098.",
+        "severity": "high",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"Add member to role\") and (ResultStatus == \"Success\") and (ModifiedProperties contains \"admin\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Persistence"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    },
+    {
+        "displayName": "Anonymizer Tools Detected in O365 Apps(SOC Prime)",
+        "description": "An anonymizer or an anonymous proxy is a tool that attempts to make activity on the Internet untraceable. Technique: T1204.",
+        "severity": "medium",
+        "enabled": true,
+        "query": "OfficeActivity | where ((Operation == \"FileUploaded\" or Operation == \"FileAccessed\" or Operation == \"FileDownloaded\") and (SourceFileName contains \"tbear\" or SourceFileName contains \"i2p\" or SourceFileName contains \"torbrowser\" or SourceFileName contains \"tor.exe\")) | where ingestion_time() >= ago(12h)",
+        "queryFrequency": "12H",
+        "queryPeriod": "730m",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "12H",
+        "suppressionEnabled": true,
+        "tactics": [
+            "Execution"
+        ],
+		"playbookName": "",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H"
+		}
+    }
+  ],
+  "Fusion": [
+    {
+      "displayName": "Advanced Multistage Attack Detection",
+      "enabled": true,
+      "alertRuleTemplateName": "f71aba3d-28fb-450b-b192-4e76a83015c8"
+    }
+  ],
+  "MLBehaviorAnalytics": [
+    {
+      "displayName": "(Preview) Anomalous SSH Login Detection",
+      "enabled": true,
+      "alertRuleTemplateName": "fa118b98-de46-4e94-87f9-8e6d5060b60b"
+    }
+  ],
+  "MicrosoftSecurityIncidentCreation": [
+    {
+      "displayName": "Create incidents based on Azure Active Directory Identity Protection alerts",
+      "description": "Create incidents based on all alerts generated in Azure Active Directory Identity Protection",
+      "enabled": true,
+      "productFilter": "Azure Active Directory Identity Protection",
+      "severitiesFilter": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "displayNamesFilter": false
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Condition": {
+                "actions": {
+                    "Send_an_email_(V2)": {
+                        "inputs": {
+                            "body": {
+                                "Body": "<p>Hello CyberMSI VSOC,<br>\n<br>\nAzure Sentinel logged a new high severity incident:</p>\n<ul>\n  <li><strong>Sentinel Incident ID</strong>: @{triggerBody()?['object']?['properties']?['incidentNumber']}</li>\n  <li><strong>Jira Incident ID:</strong> @{body('Create_a_new_issue')?['key']}</li>\n  <li><strong>Title:</strong> @{triggerBody()?['object']?['properties']?['title']}</li>\n  <li><strong>Severity:</strong> @{triggerBody()?['object']?['properties']?['severity']}</li>\n  <li><strong>Description:</strong> &nbsp;@{triggerBody()?['object']?['properties']?['description']}</li>\n  <li><strong>Time Created:</strong> @{triggerBody()?['object']?['properties']?['createdTimeUtc']}</li>\n  <li><strong>Start Time:</strong> @{triggerBody()?['object']?['properties']?['firstActivityTimeUtc']}</li>\n  <li><strong>End Time:</strong> @{triggerBody()?['object']?['properties']?['lastActivityTimeUtc']}</li>\n  <li><strong>Detection Source:</strong> @{triggerBody()?['ProductName']}</li>\n  <li><strong>Incident URL:</strong> @{triggerBody()?['object']?['properties']?['incidentUrl']}</li>\n</ul>",
+                                "Subject": "[Azure Sentinel] - High Severity Incident Reported - @{triggerBody()?['object']?['properties']?['createdTimeUtc']}",
+                                "To": "cybermsi-all@cybermsi.com"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['office365_1']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/v2/Mail"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@triggerBody()?['object']?['properties']?['severity']",
+                                "High"
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Create_a_new_issue": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "If"
+            },
+            "Create_a_new_issue": {
+                "inputs": {
+                    "body": {
+                        "fields": {
+                            "description": "Incident ID: @{triggerBody()?['object']?['properties']?['incidentNumber']}\nTitle: @{triggerBody()?['object']?['properties']?['title']}\nSeverity: @{triggerBody()?['object']?['properties']?['severity']}\nDescription: @{triggerBody()?['object']?['properties']?['description']}\nTime Generated: @{triggerBody()?['object']?['properties']?['createdTimeUtc']}\nIncident First Activity: @{triggerBody()?['object']?['properties']?['firstActivityTimeUtc']}\nIncident Last Activity: @{triggerBody()?['object']?['properties']?['lastActivityTimeUtc']}\nSubscription ID: @{triggerBody()?['workspaceInfo']?['SubscriptionId']}\nIncident URL: @{triggerBody()?['object']?['properties']?['incidentUrl']}\n\n\n",
+                            "issuetype": {
+                                "id": "10001"
+                            },
+                            "summary": "[Azure Sentinel] - @{triggerBody()?['object']?['properties']?['title']}"
+                        }
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['jira_1']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/issue",
+                    "queries": {
+                        "projectKey": "CP"
+                    }
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_Azure_Sentinel_incident_creation_rule_was_triggered": {
+                "inputs": {
+                    "body": {
+                        "callback_url": "@{listCallbackUrl()}"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azuresentinel_2']['connectionId']"
+                        }
+                    },
+                    "path": "/incident-creation"
+                },
+                "type": "ApiConnectionWebhook"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azuresentinel_2": {
+                    "connectionId": "/subscriptions/49328b1f-ecfa-4334-ac66-5fdb0cbd70bf/resourceGroups/Test-Playbook-2/providers/Microsoft.Web/connections/azuresentinel-7",
+                    "connectionName": "azuresentinel-7",
+                    "id": "/subscriptions/49328b1f-ecfa-4334-ac66-5fdb0cbd70bf/providers/Microsoft.Web/locations/centralus/managedApis/azuresentinel"
+                },
+                "jira_1": {
+                    "connectionId": "/subscriptions/49328b1f-ecfa-4334-ac66-5fdb0cbd70bf/resourceGroups/CyberMSI-Production-RG/providers/Microsoft.Web/connections/jira-18",
+                    "connectionName": "jira-18",
+                    "id": "/subscriptions/49328b1f-ecfa-4334-ac66-5fdb0cbd70bf/providers/Microsoft.Web/locations/centralus/managedApis/jira"
+                },
+                "office365_1": {
+                    "connectionId": "/subscriptions/49328b1f-ecfa-4334-ac66-5fdb0cbd70bf/resourceGroups/Test-Playbook-2/providers/Microsoft.Web/connections/office365-3",
+                    "connectionName": "office365-3",
+                    "id": "/subscriptions/49328b1f-ecfa-4334-ac66-5fdb0cbd70bf/providers/Microsoft.Web/locations/centralus/managedApis/office365"
+                }
+            }
+        }
+    }
+}

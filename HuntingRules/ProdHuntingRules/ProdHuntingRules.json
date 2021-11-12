@@ -1,0 +1,56 @@
+{
+  "hunting": [
+    {
+      "displayName": "PowerShell Commands that Download Files",
+      "description": "This query looks over 2 tables that have indicators of PowerShell commands being used to download files onto a VM. This query is useful for identifying how files got onto a VM.",
+      "query": "union DeviceProcessEvents, DeviceNetworkEvents | where TimeGenerated > ago(7d) | where FileName in~ (\"powershell.exe\", \"powershell_ise.exe\") | where ProcessCommandLine has_any(\"WebClient\", \"DownloadFile\", \"DownloadData\", \"DownloadString\", \"WebRequest\", \"Shellcode\", \"http\", \"https\") | project TimeGenerated, DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine, RemoteIP, RemoteUrl, RemotePort, RemoteIPType | top 100 by TimeGenerated desc",
+      "tactics": [
+        "Impact",
+        "Execution"
+      ]
+    },
+	{
+      "displayName": "[Template] Device Connecting to IP Address",
+      "description": "This template allows analysts to type in the name of the IP address they suspect VMs may have connected to recently. To use a template, run the query, change the first where statement, then run the query again.",
+      "query": "DeviceNetworkEvents | where RemoteIP == \"8.8.8.8\" | where TimeGenerated > ago(7d)  | project TimeGenerated, DeviceName, RemotePort, RemoteUrl | top 100 by TimeGenerated desc",
+      "tactics": [
+        "InitialAccess"
+      ]
+    },
+	{
+      "displayName": "Base64 Encoded Processes on VMs",
+      "description": "Base64 is a quick way of encoding something so that it looks different from the original. This query looks for base64 encoded processes, because processes can be encoded to avoid less advanced detections.",
+      "query": "DeviceProcessEvents | where TimeGenerated > ago(14d) | where ProcessCommandLine contains \".decode('base64')\" or ProcessCommandLine contains \"base64 --decode\" or ProcessCommandLine contains \".decode64\" | project TimeGenerated, DeviceName, FileName, FolderPath, ProcessCommandLine, InitiatingProcessCommandLine | top 100 by TimeGenerated",
+      "tactics": [
+        "Persistence",
+        "DefenseEvasion"
+      ]
+    },
+	{
+      "displayName": "[Template] Devices Connecting to Domains",
+      "description": "This template allows analysts to type in the name of the domain they suspect VMs may have connected to recently. To use a template, run the query, change the first where statement, then run the query again.",
+      "query": "DeviceNetworkEvents | where RemoteUrl contains \"google.com\" | where TimeGenerated > ago(7d)  | project TimeGenerated, DeviceName, RemotePort, RemoteUrl | top 100 by TimeGenerated desc",
+      "tactics": [
+        "InitialAccess"
+      ]
+    },
+	{
+      "displayName": "Scheduled Task Created Recently",
+      "description": "Looks for scheduled tasks that were made on a VM that were not created by the system. This query is useful for locating processes that were created by a malicious actor during an incident.",
+      "query": "DeviceProcessEvents | where TimeGenerated > ago(7d) | where FolderPath endswith \"\\schtasks.exe\" | where ProcessCommandLine has \"/create \" | where AccountName != \"system\"",
+      "tactics": [
+        "Persistence",
+        "Impact",
+        "Execution"
+      ]
+    },
+    {
+      "displayName": "[Template] Devices Connecting to Ports",
+      "description": "This template allows analysts to type in the name of the port they suspect VMs may have connected to recently. To use a template, run the query, change the first where statement, then run the query again.",
+      "query": "DeviceNetworkEvents | where RemotePort == \"443\" | where TimeGenerated > ago(7d)  | project TimeGenerated, DeviceName, RemoteUrl, RemotePort, LocalPort | top 100 by TimeGenerated desc",
+      "tactics": [
+        "InitialAccess"
+      ]
+    }
+  ]
+}

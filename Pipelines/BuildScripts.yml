@@ -1,0 +1,28 @@
+# This header section tells the script builder pipeline where to find the scripts it will be publishing.
+trigger:
+ paths:
+   include:
+     - Scripts/*
+
+pool:
+  vmImage: 'windows-2019'
+
+# This stage does all 3 of the setup tasks which are copying script files, verifying those files, and publishing those files to the pipeline as locally generated artifacts.
+steps:
+- task: CopyFiles@2
+  displayName: 'Copy Scripts'
+  inputs:
+    SourceFolder: Scripts
+    TargetFolder: '$(build.artifactstagingdirectory)'
+- task: Files-Validator@1
+  inputs:
+    rootDir: '$(build.artifactstagingdirectory)/*.ps1'
+    validateXML: false
+    validateJSON: false
+    validateYAML: false
+    validatePS: true
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    targetPath: Scripts
+    artifact: Scripts

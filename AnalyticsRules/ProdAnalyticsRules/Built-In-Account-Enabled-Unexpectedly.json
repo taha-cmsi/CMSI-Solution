@@ -1,0 +1,33 @@
+{
+	"Scheduled": [{
+		"displayName": "Built-In Account Enabled Unexpectedly",
+		"description": "Detects built-in accounts being enabled on Windows devices by using event IDs and built-in account names.",
+		"severity": "Medium",
+		"enabled": true,
+		"query": "SecurityEvent | where EventID == \"4722\" | where TargetUserName == \"Guest\" or TargetUserName == \"Administrator\" | where ingestion_time() >= ago(30min)",
+		"queryFrequency": "30m",
+		"queryPeriod": "35m",
+		"triggerOperator": "GreaterThan",
+		"triggerThreshold": 0,
+		"suppressionDuration": "1H",
+		"suppressionEnabled": false,
+		"tactics": [
+			"Persistence"
+		],
+		"playbookName": "Open-jira-Ticket",
+		"aggregationKind": "SingleAlert",
+		"createIncident": true,
+		"groupingConfiguration": {
+			"enabled": false,
+			"reopenClosedIncident": false,
+			"lookbackDuration": "PT5H",
+			"entitiesMatchingMethod": "All",
+			"groupByEntities": [
+				"Account",
+				"Ip",
+				"Host",
+				"Url"
+			]
+		}
+	}]
+}
